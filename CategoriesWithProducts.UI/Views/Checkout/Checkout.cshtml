@@ -1,0 +1,106 @@
+﻿	@model CategoriesWithProducts.UI.Models.CheckoutViewModel
+
+<div class="container mt-5">
+	<h2 class="mb-4">Checkout</h2>
+
+	<div class="row">
+		<div class="col-md-8">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th></th>
+						<th>Quantity</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var product in Model.CartItems)
+					{
+						<tr>
+							<td>@product.ProductName</td>
+							<td><img src="@product.ProductImageUrl" alt="@product.ProductName" width="80" /></td>
+							<td>@product.Quantity</td>
+							<td>@(product.ProductPrice * product.Quantity) ₺</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-body text-end">
+					<form asp-action="Checkout" method="post" class="mb-3">
+						<div class="input-group mb-3">
+							<input type="text" name="Code" class="form-control" placeholder="Coupon Code" />
+							<button type="submit" class="btn btn-primary">Apply</button>
+						</div>
+					</form>
+					@if (Model.AppliedCoupon != null)
+					{
+						<div class="mb-3">
+							<span class="badge bg-success">
+								@Model.AppliedCoupon.Code - @Model.DiscountAmount ₺ discount
+								<a asp-action="RemoveCoupon" asp-controller="Checkout" asp-route-code="@Model.AppliedCoupon.Code" style="text-decoration:none;">×</a>
+							</span>
+						</div>
+					}
+					<p class="fs-5">
+						@if (Model.DiscountAmount > 0)
+						{
+							<span class="text-decoration-line-through">@Model.ProductTotalPrice ₺</span>
+
+							<br />
+							<span class="text-success">İndirim: -@Model.DiscountAmount ₺</span>
+
+							@if (Model.FreeShipping)
+							{
+							<p class="text-success mb-1">
+								<span class="text-decoration-line-through">Shipping: 50 ₺</span><br />
+								<strong>🎉 You’ve got free shipping!</strong>
+							</p>
+							}
+							else
+							{
+							<p class="mb-1"><strong>Shipping:</strong> @Model.ShippingPrice ₺</p>
+							<p class="text-muted"><em>Add more items for free shipping</em></p>
+							}
+
+						<br />
+						<h5>New Total:</h5>
+						<h4 class="fw-bold mb-4">@Model.TotalPrice ₺</h4>
+						}
+						else
+						{
+						<p class="fs-5 fw-bold">Cart Total: @Model.ProductTotalPrice ₺</p>
+							@if (Model.FreeShipping)
+							{
+							<p class="text-success mb-1">
+								<span class="text-decoration-line-through">Shipping: 50 ₺</span><br />
+								<strong>🎉 You’ve got free shipping!</strong>
+							</p>
+							}
+							else
+							{
+							<p class="mb-1"><strong>Shipping:</strong> @Model.ShippingPrice ₺</p>
+							<p class="text-muted"><em>Add more items for free shipping</em></p>
+							}
+						<hr />
+
+						<h5>Total:</h5>
+						<h4 class="fw-bold mb-4">@Model.TotalPrice ₺</h4>
+						}
+					</p>
+
+
+
+					<a asp-controller="Cart" asp-action="GetCarts" class="btn btn-outline-dark me-2 mb-2">Back to Cart</a>
+
+					<form asp-action="CheckoutConfirmed" method="post" class="d-inline">
+						<button class="btn btn-success mb-2">Order</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

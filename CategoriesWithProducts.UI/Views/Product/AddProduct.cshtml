@@ -1,0 +1,41 @@
+﻿@model CategoriesWithProducts.UI.Models.AddProductViewModel
+
+@{
+	var categoryId = ViewBag.CategoryId;
+}
+
+<h1 class="mt-3">Add Product</h1>
+
+@if (Model is not null)
+{
+
+	<form asp-aciton="AddProduct" asp-controller="Product" method="post">
+
+		<input type="hidden" asp-for="CategoryId" />
+
+		<div class="m-3">
+			<label class="form-label">Name</label>
+			<input type="text" class="form-control" asp-for="Name" />
+		</div>
+
+		<div class="m-3">
+			<label class="form-label">Price</label>
+			<input type="text" class="form-control" asp-for="Price" />
+		</div>
+
+		<div class="m-3">
+			<label class="form-label">ProductImageUrl</label>
+			<input type="text" class="form-control" asp-for="ProductImageUrl" />
+		</div>
+
+
+		<div class="mt-3">
+			<button type="submit" class="btn btn-primary">Save</button>
+		</div>
+		<div>
+			<a href="https://localhost:7260/Product/Index/@Model.CategoryId" class="btn btn-secondary">Back to List</a>
+
+		</div>
+
+	</form>
+}

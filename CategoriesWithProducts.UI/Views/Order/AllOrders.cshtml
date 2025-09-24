@@ -1,0 +1,65 @@
+﻿@using CategoriesWithProducts.UI.Models.DTO
+@model Dictionary<Guid, List<OrderDto>>
+
+<div class="container mt-4">
+    <h2>All User Orders</h2>
+
+
+    <div class="accordion mt-3" id="ordersAccordion">
+        @{
+            int index = 0;
+        }
+
+        @foreach (var kvp in Model)
+        {
+            var userId = kvp.Key;
+            var orders = kvp.Value;
+            var userName = orders.FirstOrDefault()?.UserName;
+            var accordionId = $"accordionItem{index}";
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-@accordionId">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@accordionId" aria-expanded="false" aria-controls="collapse-@accordionId">
+                        @userName - @userId
+                    </button>
+                </h2>
+                <div id="collapse-@accordionId" class="accordion-collapse collapse" aria-labelledby="heading-@accordionId" data-bs-parent="#ordersAccordion">
+                    <div class="accordion-body">
+                        @foreach (var order in orders)
+                        {
+                            <div class="card mb-3 p-3">
+                                <p><strong>Order Date:</strong> @order.CreatedAt.ToLocalTime()</p>
+                                <ul class="list-group">
+                                    @foreach (var item in order.OrderItems.Where(i => i.Quantity > 0))
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>@item.ProductName</strong><br />
+                                                Quantity: @item.Quantity, @(item.ProductPrice * item.Quantity)₺
+                                                @if (item.IsRefund)
+                                                {
+                                                    <span class="badge bg-secondary ms-2">Refunded</span>
+                                                }
+                                            </div>
+                                            @if (!item.IsRefund)
+                                            {
+                                                <form method="post" asp-action="Refund" asp-controller="Order" asp-route-returnUrl="@Context.Request.Path" class="d-flex align-items-center">
+                                                    <input type="hidden" name="OrderId" value="@order.Id" />
+                                                    <input type="hidden" name="OrderItemId" value="@item.Id" />
+                                                    <input type="number" name="RefundQuantity" placeholder="0" min="1" max="@item.Quantity" required class="form-control form-control-sm w-auto me-2" />
+                                                    <button type="submit" class="btn btn-sm btn-warning">İade</button>
+                                                </form>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            index++;
+        }
+    </div>
+</div>

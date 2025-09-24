@@ -1,0 +1,9 @@
+﻿@using CategoriesWithProducts.UI.Models.DTO
+@model List<CategoryDto>
+
+@foreach (var category in Model)
+{
+	<li><a class="dropdown-item" href="/Product/Index/@category.Id">@category.Name</a></li>
+}
+<li><hr class="dropdown-divider" /></li>
+<li><a class="dropdown-item" asp-controller="Categories" asp-action="Index">All Categories</a></li>

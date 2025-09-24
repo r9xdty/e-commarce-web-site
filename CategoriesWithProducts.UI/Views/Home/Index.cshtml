@@ -1,0 +1,107 @@
+﻿@model CategoriesWithProducts.UI.Models.HomePageViewModel
+
+
+<div class="text-center mt-5">
+	<img src="~/uploads/logo.png" alt="Home Image" style="max-width: 200px; width: 100%; object-fit: scale-down;" />
+	<h1 class="display-4 fw-bold text-primary">Welcome to <span class="text-info">AllWays Bazaar</span></h1>
+	<p class="lead text-muted">Discover the best products across categories</p>
+</div>
+
+@foreach (var cat in Model.CategoriesWithProducts.Take(5))
+{
+	<div class="container mt-5 p-4 bg-body rounded shadow-sm">
+		<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+			<h4 class="fw-semibold mb-0 ">@cat.Category.Name</h4>
+			<a href="/Product/Index/@cat.Category.Id" class="btn btn-sm btn-outline-primary">View All</a>
+		</div>
+		@{
+			var swiperId = $"swiper-{cat.Category.Id}";
+		}
+		<div class="swiper mySwiper position-relative">
+			<div class="swiper-wrapper" id="@swiperId">
+
+				@foreach (var product in cat.Products.Take(8))
+				{
+					<div class="swiper-slide col-6 col-md-4 col-lg-3">
+						<div class="card h-100 d-flex flex-column w-100 card-theme" style="min-height: 550px;">
+							<a asp-controller="Product" asp-action="SelectedProduct" asp-route-id="@product.Id">
+								<img src="@product.ProductImageUrl" class="card-img-top img-fluid mt-5" alt="@product.Name" style="height: 200px; object-fit: scale-down;" />
+							</a>
+
+							<div class="card-body d-flex flex-column justify-content-between">
+								<div>
+									<h5 class="card-title">@product.Name</h5>
+									<a class="card-subtitle mb-2 text-muted" href="/Product/Index/@product.CategoryId">@cat.Category.Name</a>
+								</div>
+
+								<div>
+									<h5 class="text-success fw-bold">@product.Price ₺</h5>
+
+									<form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-2 flex-wrap mt-2">
+										<input type="hidden" name="ProductId" value="@product.Id" />
+										<input type="hidden" name="ProductName" value="@product.Name" />
+										<input type="hidden" name="ProductImageUrl" value="@product.ProductImageUrl" />
+										<input type="hidden" name="ProductPrice" value="@product.Price" />
+
+										<button type="button" class="btn btn-outline-secondary quantity-minus">-</button>
+										<input type="number" name="Quantity" value="1" min="1" class="form-control quantity-input" style="width: 60px;" />
+										<button type="button" class="btn btn-outline-secondary quantity-plus">+</button>
+
+										<button class="btn btn-success w-100 mt-2"><i class="bi bi-cart-plus me-2"></i>Add to Cart</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+		</div>
+	</div>
+
+}
+
+@section Scripts {
+<script>
+	document.querySelectorAll('.swiper').forEach(function (el) {
+		new Swiper(el, {
+			slidesPerView: 4,
+			spaceBetween: 20,
+			loop: true,
+			autoplay: {
+				delay: 5000,
+				disableOnInteraction: false,
+			},
+			navigation: {
+				nextEl: el.querySelector('.swiper-button-next'),
+				prevEl: el.querySelector('.swiper-button-prev'),
+			},
+			breakpoints: {
+				0: { slidesPerView: 1 },
+				576: { slidesPerView: 2 },
+				768: { slidesPerView: 3 },
+				992: { slidesPerView: 4 }
+			}
+		});
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		$('.quantity-minus').click(function () {
+			let input = $(this).siblings('.quantity-input');
+			let current = parseInt(input.val());
+			if (current > 1) {
+				input.val(current - 1);
+			}
+		});
+
+		$('.quantity-plus').click(function () {
+			let input = $(this).siblings('.quantity-input');
+			input.val(parseInt(input.val()) + 1);
+		});
+	});
+</script>
+}

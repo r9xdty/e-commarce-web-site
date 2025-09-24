@@ -1,0 +1,102 @@
+﻿@model List<CategoriesWithProducts.UI.Models.DTO.UserCouponDto>
+
+@{
+	ViewData["Title"] = "Coupons";
+	var isAuthorized = User.IsInRole("Admin");
+}
+
+<div class="container mt-5">
+	<h1>Used Coupons By Users</h1>
+
+	<!-- Buton için alan -->
+	<div id="userCouponControls" class="mb-3"></div>
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>User Name</th>
+				<th>User Id</th>
+				<th>Coupon Code</th>
+				<th>Used Date</th>
+				<th>Unapply This Coupon For User</th>
+			</tr>
+		</thead>
+		<tbody id="couponTableBody">
+			@foreach (var user in Model)
+			{
+				<tr data-id="@user.Id" data-user-id="@user.UserId" data-coupon-id="@user.CouponCode">
+					<td>@user.UserName</td>
+					<td>@user.UserId</td>
+					<td>@user.CouponCode</td>
+					<td>@user.UsedAt.ToString("yyyy-MM-dd HH:mm")</td>
+					<td class="operation-buttons">
+						<button class="btn btn-danger btn-sm btnUnapplyCoupon" data-user-id="@user.UserId" data-coupon-code="@user.CouponCode">
+							Unapply
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<!-- Sadece Unapply için Modal -->
+<div class="modal fade" id="userCouponModal" tabindex="-1" aria-labelledby="userCouponModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="userCouponModalLabel">Unapply Coupon</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to unapply this coupon for the user?</p>
+				<!-- Gizli inputlar -->
+				<input type="hidden" id="modalUserId" />
+				<input type="hidden" id="modalCouponCode" />
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-danger" id="confirmUnapplyCoupon">Unapply</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	// Tıklayınca modalı aç
+	$(document).on('click', '.btnUnapplyCoupon', function () {
+		var userId = $(this).data('user-id');
+		var couponCode = $(this).data('coupon-code');
+
+		$('#modalUserId').val(userId);
+		$('#modalCouponCode').val(couponCode);
+
+		$('#userCouponModal').modal('show');
+	});
+
+	// Modal içinden Unapply butonuna basılınca
+	$('#confirmUnapplyCoupon').on('click', function () {
+		var userId = $('#modalUserId').val();
+		var couponCode = $('#modalCouponCode').val();
+
+		$.ajax({
+			url: `/Coupons/DeleteCouponCodeFromUser`, // senin action'ın
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({ userId: userId, couponCode: couponCode }), // body gönderiyoruz
+			success: function (response) {
+				if (response.success) {
+					toastr.success("Coupon unapplied successfully.");
+					location.reload();
+				} else {
+					toastr.error("Coupon couldn't be unapplied.");
+				}
+			},
+			error: function () {
+				toastr.error("There was an error!");
+			}
+		});
+	});
+
+</script>

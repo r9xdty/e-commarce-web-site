@@ -1,0 +1,11 @@
+2025-03-25 11:48:54.578 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7287/api/Category - null null
+2025-03-25 11:48:54.596 +03:00 [INF] Executing endpoint 'CategoriesWithProducts.Controllers.CategoryController.GetAllCategories (CategoriesWithProducts)'
+2025-03-25 11:48:54.598 +03:00 [INF] Route matched with {action = "GetAllCategories", controller = "Category"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllCategories() on controller CategoriesWithProducts.Controllers.CategoryController (CategoriesWithProducts).
+2025-03-25 11:48:54.616 +03:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[Id], [c].[Name], [c].[TotalPrice]
+FROM [Categories] AS [c]
+2025-03-25 11:48:54.620 +03:00 [INF] Finished GetAllCategories request with data: [{"Id":"906cb139-415a-4bbb-a174-1a1faf9fb1f6","Name":"Beyaz E\u015Fya","TotalPrice":0.00},{"Id":"f7248fc3-2585-4efb-8d1d-1c555f4087f6","Name":"Teknolojik Aletler","TotalPrice":0.00},{"Id":"14ceba71-4b51-4777-9b17-46602cf66153","Name":"Tatl\u0131lar","TotalPrice":0.00},{"Id":"6884f7d7-ad1f-4101-8df3-7a6fa7387d81","Name":"Meyveler","TotalPrice":0.00},{"Id":"f077a22e-4248-4bf6-b564-c7cf4e250263","Name":"Sebzeler","TotalPrice":0.00}]
+2025-03-25 11:48:54.623 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[CategoriesWithProducts.Models.DTO.CategoryDto, CategoriesWithProducts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-03-25 11:48:54.624 +03:00 [INF] Executed action CategoriesWithProducts.Controllers.CategoryController.GetAllCategories (CategoriesWithProducts) in 25.096ms
+2025-03-25 11:48:54.625 +03:00 [INF] Executed endpoint 'CategoriesWithProducts.Controllers.CategoryController.GetAllCategories (CategoriesWithProducts)'
+2025-03-25 11:48:54.627 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7287/api/Category - 200 null application/json; charset=utf-8 48.6001ms

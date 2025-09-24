@@ -1,0 +1,172 @@
+﻿@model List<CategoriesWithProducts.UI.Models.DTO.CouponDto>
+
+@{
+	ViewData["Title"] = "Coupons";
+	var isAuthorized = User.IsInRole("Admin");
+}
+
+
+@if (!User.IsInRole("Admin"))
+{
+	<p>You have no access to this page!</p>
+}
+else
+{
+	<div class="container mt-5">
+		<h1>Coupons</h1>
+
+		<!-- Buton için alan -->
+		<div id="couponControls" class="mb-3"></div>
+
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Coupon Code</th>
+					<th>DiscountRate</th>
+					<th>ExpirationDate</th>
+					<th>Operations</th>
+				</tr>
+			</thead>
+			<tbody id="couponTableBody">
+				@foreach (var coupon in Model)
+				{
+					<tr data-id="@coupon.Id" data-name="@coupon.Code">
+						<td>@coupon.Code</td>
+
+						<td>
+							@if (@coupon.IsPercent == true)
+							{
+								<span>%@coupon.DiscountRate</span>
+
+							}
+							else
+							{
+								<span>@coupon.DiscountRate ₺</span>
+							}
+						</td>
+						<td>@coupon.ExpirationDate</td>
+						<td class="operation-buttons">
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
+<!-- Modal -->
+<div class="modal fade" id="couponModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Coupon Add</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="couponForm">
+					<input type="hidden" id="couponId">
+					<div class="mb-3">
+						<label for="couponCode" class="form-label">Coupon Code</label>
+						<input type="text" id="couponCode" class="form-control" required>
+					</div>
+					<label for="couponType">Coupon Type</label>
+					<select id="couponType" class="form-control">
+						<option value="percent">Percentage</option>
+						<option value="amount">Amount</option>
+					</select>
+					<div class="mb-3">
+						<label for="couponDiscountRate" class="form-label">Coupon Discount Rate</label>
+						<input type="text" id="couponDiscountRate" class="form-control" required>
+					</div>
+					<div class="mb-3">
+						<label for="couponExpriationDate" class="form-label">Coupon Expriation Date</label>
+						<input type="date" id="couponExpriationDate" class="form-control" required>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="saveCoupon" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+		$(document).ready(function () {
+		const userIsAuthorized = @isAuthorized.ToString().ToLower();
+
+		if (userIsAuthorized) {
+			$('#couponControls').append('<button class="btn btn-primary" id="btnAddCoupon">Add Coupon</button>');
+
+			$('#couponTableBody tr').each(function () {
+				const id = $(this).data('id');
+				const buttons = `
+					<button class="btn btn-danger btnDelete" data-id="${id}">Delete</button>
+				`;
+				$(this).find('.operation-buttons').html(buttons);
+			});
+		}
+
+		$(document).on('click', '#btnAddCoupon', function () {
+			$('#couponId').val('');
+			$('#couponCode').val('');
+			$('#couponIsPercent').val('');
+			$('#couponDiscountRate').val('');
+			$('#couponExpriationDate').val('');
+			$('#couponModal').modal('show');
+		});
+
+		$(document).on('click', '.btnDelete', function () {
+			let id = $(this).data('id');
+			if (confirm("Are you sure to delete this coupon?")) {
+				$.ajax({
+					url: `/Coupons/RemoveCoupon/${id}`,
+					type: 'POST',
+					success: function (response) {
+						if (response.success) {
+							toastr.success("Coupon deleted successfully.");
+							location.reload();
+						} else {
+							toastr.error("Coupon couldn't be deleted.");
+						}
+					},
+					error: function () {
+						toastr.error("There was an error!");
+					}
+				});
+			}
+		});
+
+		$('#saveCoupon').click(function () {
+			let data = {
+				Code: $('#couponCode').val(),
+				IsPercent: $('#couponType').val() === "percent",
+				DiscountRate: parseFloat($('#couponDiscountRate').val()),
+				ExpirationDate: $('#couponExpriationDate').val()
+			};
+
+			let url = $('#couponId').val() ? `/Coupons/EditCoupon` : '/Coupons/AddCoupon';
+
+			$.ajax({
+				url: url,
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function (response) {
+					if (response.success) {
+						toastr.success("Coupon saved successfully.");
+						$('#couponModal').modal('hide');
+						location.reload();
+					} else {
+					toastr.error("Coupon couldn't be saved!");
+					}
+				},
+				error: function () {
+					toastr.error("There was an error!");
+				}
+			});
+		});
+	});
+</script>

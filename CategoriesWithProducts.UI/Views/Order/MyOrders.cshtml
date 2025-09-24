@@ -1,0 +1,39 @@
+﻿@using CategoriesWithProducts.UI.Models.DTO
+@model List<OrderDto>
+
+<div class="container mt-2">
+    <h2>My Orders</h2>
+    @foreach (var order in Model)
+    {
+        <div class="card mb-3 p-3">
+            <p><strong>Order Date:</strong> @order.CreatedAt.ToLocalTime()</p>
+            <ul class="list-group">
+                @foreach (var item in order.OrderItems.Where(i => i.Quantity > 0))
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>@item.ProductName</strong>
+                            <br />
+                            Quantity: @item.Quantity, @(item.ProductPrice * item.Quantity)₺
+
+                            @if (item.IsRefund)
+                            {
+                                <span class="badge bg-secondary ms-2">Refunded</span>
+                            }
+                        </div>
+
+                        @if (!item.IsRefund)
+                        {
+                            <form method="post" asp-action="Refund" asp-controller="Order" asp-route-returnUrl="@Context.Request.Path" class="d-flex align-items-center">
+                                <input type="hidden" name="OrderId" value="@order.Id" />
+                                <input type="hidden" name="OrderItemId" value="@item.Id" />
+                                <input type="number" name="RefundQuantity" placeholder="0" min="1" max="@item.Quantity" required class="form-control form-control-sm w-auto me-2" />
+                                <button type="submit" class="btn btn-sm btn-warning">İade</button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

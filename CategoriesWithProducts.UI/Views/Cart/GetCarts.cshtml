@@ -1,0 +1,76 @@
+﻿@model CategoriesWithProducts.UI.Models.DTO.CartDto
+
+@{
+	ViewData["Title"] = "Sepetim";
+}
+<div class="container mt-auto">
+	<h2 class="mb-4">My Cart</h2>
+
+	@if (Model.Items.Any())
+	{
+		<div class="row">
+			<!-- Ürün tablosu -->
+			<div class="col-md-8">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Product</th>
+							<th>Product Image</th>
+							<th>Quantity</th>
+							<th>Total Price</th>
+							<th>Chose Quantity</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var item in Model.Items)
+						{
+							<tr>
+								<td>@item.ProductName</td>
+								<td><img src="@item.ProductImageUrl" alt="@item.ProductName" width="80" /></td>
+								<td>@item.Quantity</td>
+								<td>@(item.ProductPrice * item.Quantity) ₺</td>
+								<td>
+									<form asp-action="UpdateQuantity" asp-controller="Cart" method="post" style="display:inline-block">
+										<input type="hidden" name="ProductId" value="@item.ProductId" />
+										<button name="operation" value="decrease" class="btn btn-sm btn-outline-secondary">-</button>
+										<span class="mx-2">@item.Quantity</span>
+										<button name="operation" value="increase" class="btn btn-sm btn-outline-secondary">+</button>
+									</form>
+								</td>
+								<td>
+									<form asp-action="RemoveFromCart" method="post" class="d-inline">
+										<input type="hidden" name="productId" value="@item.ProductId" />
+										<button type="submit" class="btn btn-danger btn-sm">Remove All From Cart</button>
+									</form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+
+				<form asp-action="ClearCart" method="post">
+					<button type="submit" class="btn btn-warning mb-3">Clean the Cart</button>
+				</form>
+			</div>
+
+			<div class="col-md-3">
+				<div class="card">
+					<div class="card-body text-end">
+						<h4 class="card-text fw-bold mb-4">
+							Total: @Model.Items.Sum(item => item.ProductPrice * item.Quantity) ₺
+						</h4>
+
+						<a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark me-2 mb-2">Back to Shopping</a>
+						<a asp-controller="Checkout" asp-action="Checkout" class="btn btn-success mb-2">Checkout</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	}
+	else
+	{
+		<div class="alert alert-info">There is no Product in your Cart!</div>
+	}
+</div>

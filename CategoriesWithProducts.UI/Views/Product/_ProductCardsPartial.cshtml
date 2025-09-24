@@ -1,0 +1,21 @@
+﻿@using CategoriesWithProducts.UI.Models.DTO
+@model List<ProductDto>
+
+<ul class="list-group position-absolute w-100 z-3" id="searchSuggestions">
+    @if (!Model.Any())
+    {
+        <li class="list-group-item">No products found</li>
+    }
+    else
+    {
+        foreach (var product in Model)
+        {
+            <li class="list-group-item">
+                <a href="@Url.Action("SelectedProduct", "Product", new { id = product.Id })" class="text-decoration-none">
+                    <img src="@product.ProductImageUrl" alt="@product.Name" width="100" />
+                    @product.Name
+                </a>
+            </li>
+        }
+    }
+</ul>

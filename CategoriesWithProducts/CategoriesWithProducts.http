@@ -1,0 +1,7 @@
+@CategoriesWithProducts_HostAddress = https://localhost:7287
+
+GET {{CategoriesWithProducts_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+

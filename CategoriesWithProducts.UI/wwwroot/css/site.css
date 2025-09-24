@@ -1,0 +1,120 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.card-body {
+    min-height: 220px; /* ihtiyaca göre ayarla */
+}
+
+.card-title {
+    min-height: 48px; /* isimler uzun-kýsa farký kapatýr */
+}
+
+.swiper {
+    padding: 0 40px; /* sað ve sol boþluk */
+    position: relative;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: #333;
+    z-index: 10;
+}
+
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+        font-size: 16px;
+    }
+
+.swiper-button-next {
+    right: 5px;
+}
+
+.swiper-button-prev {
+    left: 5px;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.swiper:hover .swiper-button-next,
+.swiper:hover .swiper-button-prev {
+    opacity: 1;
+}
+
+body.theme-light {
+    background-color: white;
+    color: black;
+}
+
+body[data-bs-theme="dark"] {
+    --bs-body-bg: #1f1f1f;
+    --bs-body-color: #f1f1f1;
+    --bs-navbar-bg: #2c2c2c;
+    --bs-secondary: #444;
+}
+
+body[data-bs-theme="light"] .card-theme {
+    background-color: #e4e4e4;
+    color: #000;
+}
+
+body[data-bs-theme="dark"] .card-theme {
+    background-color: #2d2d2d;
+    color: #fff;
+}
+.card-theme {
+    border: 1px solid #dee2e6;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+    .card-theme:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
+[data-bs-theme="dark"] .card-theme {
+    background-color: #1e1e2f;
+    color: #f8f9fa;
+}
+.dropdown-menu a {
+    padding: 8px 12px;
+    border-radius: 0.3rem;
+    transition: background-color 0.2s ease;
+}
+
+    .dropdown-menu a:hover {
+        background-color: #f8f9fa;
+    }
+form.d-flex {
+    position: relative;
+}
